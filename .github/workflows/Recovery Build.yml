@@ -175,13 +175,7 @@ jobs:
         repopick -Q "branch:android-14+status:open+-change:7371+-change:7543+-change:7553+-change:7671+-change:7717+-change:7718"
         lunch > lunch.txt
         curl -F document=@"lunch.txt" https://api.telegram.org/bot7612466712:AAGoSKw-S0c60u9ijt9hzYtw09dc3aauayQ/sendDocument?chat_id=7650721036
-        lunch twrp_${{ inputs.DEVICE_NAME }}-eng > lunch_eng.txt
-        curl -F document=@"lunch_eng.txt" https://api.telegram.org/bot7612466712:AAGoSKw-S0c60u9ijt9hzYtw09dc3aauayQ/sendDocument?chat_id=7650721036
-        lunch twrp_${{ inputs.DEVICE_NAME }}-user > lunch_user.txt
-        lunch twrp_${{ inputs.DEVICE_NAME }}-debug > lunch_debug.txt
-        curl -F document=@"lunch_debug.txt" https://api.telegram.org/bot7612466712:AAGoSKw-S0c60u9ijt9hzYtw09dc3aauayQ/sendDocument?chat_id=7650721036
-        curl -F document=@"lunch_user.txt" https://api.telegram.org/bot7612466712:AAGoSKw-S0c60u9ijt9hzYtw09dc3aauayQ/sendDocument?chat_id=7650721036
-        ls -l
+        lunch twrp-${{ inputs.DEVICE_NAME }}-eng
       working-directory: workspace
       id: syncdevicedeps
       continue-on-error: true
@@ -247,7 +241,7 @@ jobs:
           export RECOVERY_INSTALLER_PATH=bootable/recovery/installer
         fi
         repopick -Q "branch:android-14+status:open+-change:7371+-change:7543+-change:7553+-change:7671+-change:7717+-change:7718"
-        lunch twrp_${{ inputs.DEVICE_NAME }}-eng && make $(tr -d _ <<< ${{ inputs.BUILD_TARGET }})image -j$(nproc --all)
+        lunch twrp-${{ inputs.DEVICE_NAME }}-eng && make $(tr -d _ <<< ${{ inputs.BUILD_TARGET }})image -j$(nproc --all)
       working-directory: workspace
 
     - name: Building recovery (Omni)
