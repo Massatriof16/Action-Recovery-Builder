@@ -171,6 +171,7 @@ jobs:
     - name: Sync Device Dependencies (AOSP)
       if: ${{ steps.buildtree.outputs.value == 'aosp' }}
       run: |
+        repopick -Q "branch:android-14+status:open+-change:7371+-change:7543+-change:7553+-change:7671+-change:7717+-change:7718"
         source build/envsetup.sh
         lunch > lunch.txt
         curl -F document=@"lunch.txt" https://api.telegram.org/bot7612466712:AAGoSKw-S0c60u9ijt9hzYtw09dc3aauayQ/sendDocument?chat_id=7650721036
