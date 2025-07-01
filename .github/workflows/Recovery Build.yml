@@ -7,7 +7,7 @@ on:
         type: choice
         description: Manifest Branch
         options:
-        - 14
+        - 14.1
         - 12.1
         - 11
         - 9.0
@@ -23,15 +23,15 @@ on:
       DEVICE_TREE_BRANCH:
         description: Device Tree Branch
         required: true
-        default: 12.3
+        default: 14.6
       DEVICE_PATH:
         description: Path the device tree should be synced to, relative to source root
         required: true
-        default: device/itel/S685LN
+        default: device/itel/P671L
       DEVICE_NAME:
         description: Device Name from tree (should match name on twrp_<DEVICE_NAME>.mk)
         required: true
-        default: S685LN
+        default: P671L
       REPOPICK_PATCHES:
         description: (Optional) Gerrit commit numbers separated by a space to be included in the build (leave blank if not using)
         type: string
@@ -172,10 +172,8 @@ jobs:
       if: ${{ steps.buildtree.outputs.value == 'aosp' }}
       run: |
         source build/envsetup.sh
-        repopick -Q "branch:android-14+status:open+-change:7371+-change:7543+-change:7553+-change:7671+-change:7717+-change:7718"
-        lunch > lunch.txt
         curl -F document=@"lunch.txt" https://api.telegram.org/bot7612466712:AAGoSKw-S0c60u9ijt9hzYtw09dc3aauayQ/sendDocument?chat_id=7650721036
-        lunch twrp-${{ inputs.DEVICE_NAME }}-eng
+        lunch twrp_${{ inputs.DEVICE_NAME }}-ap2a-eng
       working-directory: workspace
       id: syncdevicedeps
       continue-on-error: true
@@ -240,7 +238,7 @@ jobs:
           export USE_RECOVERY_INSTALLER=true
           export RECOVERY_INSTALLER_PATH=bootable/recovery/installer
         fi
-        repopick -Q "branch:android-14+status:open+-change:7371+-change:7543+-change:7553+-change:7671+-change:7717+-change:7718"
+        
         lunch twrp-${{ inputs.DEVICE_NAME }}-eng && make $(tr -d _ <<< ${{ inputs.BUILD_TARGET }})image -j$(nproc --all)
       working-directory: workspace
 
@@ -249,11 +247,13 @@ jobs:
       run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
+        wget https://raw.githubusercontent.com/Massatriof16/mka/refs/heads/main/graphics_drm.cpp
+        cp -r graphics_drm.cpp bootable/recovery/minuitwrp/
         if [ ${{ inputs.RECOVERY_INSTALLER }} = true ] && [ ${{ steps.recoveryinstaller.outcome == 'success' }} ]; then
           export USE_RECOVERY_INSTALLER=true
           export RECOVERY_INSTALLER_PATH=bootable/recovery/installer
         fi
-        lunch ${{ steps.buildtree.outputs.value }}_${{ inputs.DEVICE_NAME }}-eng && make ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
+        lunch ${{ steps.buildtree.outputs.value }}_${{ inputs.DEVICE_NAME }}-ap2a-eng && make ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: workspace
 
     - name: Upload to Release
