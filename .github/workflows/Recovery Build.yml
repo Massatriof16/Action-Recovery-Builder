@@ -7,7 +7,7 @@ on:
         type: choice
         description: Manifest Branch
         options:
-        - 14.1
+        - 14
         - 12.1
         - 11
         - 9.0
@@ -15,7 +15,7 @@ on:
         - 7.1
         - 6.0
         required: true
-        default: 12.1
+        default: 14
       DEVICE_TREE_URL:
         description: Device Tree URL
         required: true
@@ -93,7 +93,7 @@ jobs:
       uses: haya14busa/action-cond@v1.2.1
       id: buildtree
       with:
-        cond: ${{ inputs.MANIFEST_BRANCH == '11' || inputs.MANIFEST_BRANCH == '12.1' || inputs.MANIFEST_BRANCH == '14.1' }}
+        cond: ${{ inputs.MANIFEST_BRANCH == '11' || inputs.MANIFEST_BRANCH == '12.1' || inputs.MANIFEST_BRANCH == '14' }}
         if_true: aosp
         if_false: omni
 
